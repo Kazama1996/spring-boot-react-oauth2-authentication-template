@@ -59,12 +59,12 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // @Override
-    // protected boolean shouldNotFilter(HttpServletRequest request) throws
-    // ServletException {
-    // String path = request.getRequestURI();
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws
+    ServletException {
+    String path = request.getRequestURI();
 
-    // return path.startsWith("/api/v1/auth");
-    // }
+    return path.startsWith("/api/v1/auth");
+    }
 
 }
