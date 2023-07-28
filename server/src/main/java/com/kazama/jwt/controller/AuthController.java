@@ -21,16 +21,18 @@ public class AuthController {
 
     @Autowired
     private final UserService userService;
-    
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AuthRequest reqBody , HttpServletResponse response){
 
-        return userService.createUser(reqBody , response);
-    }    
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody AuthRequest reqBody, HttpServletResponse response) {
+
+        return userService.createUser(reqBody, response);
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest reqBody, HttpServletResponse response){
-    
-        return userService.authenticate(reqBody,  response);
-    }    
+    public ResponseEntity<?> login(@RequestBody LoginRequest reqBody, HttpServletResponse response) {
+
+        return userService.authenticate(reqBody, response);
+    }
+
+    // comment;
 }
