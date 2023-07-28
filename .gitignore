@@ -1,0 +1,25 @@
+# Spring Boot
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE-specific files (for Visual Studio Code)
+.vscode/
+
+# Gradle
+/.gradle/
+/build/
+
+# Logs
+/logs/
+
+# Compiled class file
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Exclude the application.yml
+/application.yml
+/application*.yml
