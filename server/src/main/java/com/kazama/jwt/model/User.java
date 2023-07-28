@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,16 +43,16 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     private  UUID userId;
     
-    @Column(name = "email")
+    @Column(name = "email" , length = 100)
     private  String email;
     
-    @Column(name = "password")
+    @Column(name = "password" , length = 14 )
     private  String password;
     
-    @Column(name = "profile_name")
+    @Column(name = "profile_name" , length = 50)
     private  String profileName;
     
-    @Column(name = "full_name")
+    @Column(name = "full_name" , length = 100 )
     private  String fullName;
 
     @Temporal(TemporalType.TIMESTAMP)
