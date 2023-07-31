@@ -13,5 +13,11 @@ spring:
       hibernate:
         format_sql: true     # Optional: Format SQL queries for readability
         show_sql: true       # Optional: Show SQL queries in logs for debugging
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 587
+    username: e07ff8ae1ad60b
+    password: f11bee4a526156
+
 env:
   jwtSecret: fb768f20b553eb5788426e96d983275382e796121f850d7ad4b2a59aa9b63b5f
