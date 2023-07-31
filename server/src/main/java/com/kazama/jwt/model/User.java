@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -61,6 +60,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name= "role")
     private  Role role;
+
+    @Column(name = "password_reset_token" , length=230)
+    private String passwordResetToken;
 
 
     @Override

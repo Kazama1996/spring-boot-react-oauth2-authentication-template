@@ -1,0 +1,7 @@
+package com.kazama.jwt.exception;
+
+public class AppException extends RuntimeException {
+    public AppException(String message){
+        super(message);
+    }
+}

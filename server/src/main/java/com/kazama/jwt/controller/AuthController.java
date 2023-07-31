@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kazama.jwt.dto.request.AuthRequest;
+import com.kazama.jwt.dto.request.ForgotPasswordRequest;
 import com.kazama.jwt.dto.request.LoginRequest;
 import com.kazama.jwt.service.UserService;
 
@@ -34,5 +35,10 @@ public class AuthController {
         return userService.authenticate(reqBody, response);
     }
 
-    // comment;
+    @PostMapping("/forgotPassowrd")
+    public ResponseEntity<?> forgotPassworda(@RequestBody ForgotPasswordRequest reqBody ){
+        
+        
+        return userService.sendPasswordResetEmail(reqBody);
+    }
 }
