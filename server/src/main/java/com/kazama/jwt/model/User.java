@@ -40,30 +40,26 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
-    private  UUID userId;
-    
-    @Column(name = "email" , length = 100)
-    private  String email;
-    
-    @Column(name = "password" , length = 14 )
-    private  String password;
-    
-    @Column(name = "profile_name" , length = 50)
-    private  String profileName;
-    
-    @Column(name = "full_name" , length = 100 )
-    private  String fullName;
+    private UUID userId;
+
+    @Column(name = "email", length = 100)
+    private String email;
+
+    @Column(name = "password", length = 250)
+    private String password;
+
+    @Column(name = "profile_name", length = 50)
+    private String profileName;
+
+    @Column(name = "full_name", length = 100)
+    private String fullName;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Instant updateAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name= "role")
-    private  Role role;
-
-    @Column(name = "password_reset_token" , length=230)
-    private String passwordResetToken;
-
+    @Column(name = "role")
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -99,5 +95,5 @@ public class User implements UserDetails {
         // TODO Auto-generated method stub
         return true;
     }
-    
+
 }

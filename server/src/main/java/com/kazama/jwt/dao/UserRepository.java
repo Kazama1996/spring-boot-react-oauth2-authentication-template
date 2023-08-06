@@ -9,6 +9,12 @@ import org.springframework.stereotype.Repository;
 import com.kazama.jwt.model.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User , UUID>{
+public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
+
+    Optional<User> findByprofileName(String profileName);
+
+    boolean existsByemail(String email);
+
+    boolean existsByProfileName(String profileName);
 }

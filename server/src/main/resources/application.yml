@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/outsta9ram  
     username: postgres     # fill your username of database       
-    password: admin     #  fill your password of database
+    password: postgres     #  fill your password of database
     driver-class-name: org.postgresql.Driver         # PostgreSQL driver class
 
   jpa:
@@ -12,7 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true     # Optional: Format SQL queries for readability
-        show_sql: true       # Optional: Show SQL queries in logs for debugging
+        show_sql: false      # Optional: Show SQL queries in logs for debugging
   mail:
     host: sandbox.smtp.mailtrap.io
     port: 587
