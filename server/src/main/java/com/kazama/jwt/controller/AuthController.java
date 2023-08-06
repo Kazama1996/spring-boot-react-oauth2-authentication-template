@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,5 +54,10 @@ public class AuthController {
     @GetMapping("/redirect/{token}")
     public RedirectView redirect(@PathVariable String token) {
         return userService.verifyPasswordResetToken(token);
+    }
+
+    @PatchMapping("/resetPassword/{token}")
+    public RedirectView updatePassword(@RequestBody String newPassword, @PathVariable String passwordResetToken) {
+        return userService.updatePassword(newPassword, passwordResetToken);
     }
 }

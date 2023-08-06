@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,18 @@ public class UserService {
 
     private final MailService mailService;
 
+    private final ZoneId userTimeZone = ZoneId.systemDefault();
+
     public ResponseEntity<?> createUser(AuthRequest request, HttpServletResponse response) {
+
+        if (userRepository.existsByemail(request.getEmail())) {
+            throw new AppException("Email :" + request.getEmail() + " already exist");
+        }
+
+        if (userRepository.existsByProfileName(request.getProfileName())) {
+            throw new AppException("ProfileName :" + request.getProfileName() + " already exist");
+        }
+
         String password = request.getPassword();
         Instant current = Instant.now();
         User user = User.builder().fullName(request.getFullName()).profileName(request.getProfileName())
@@ -66,10 +78,11 @@ public class UserService {
 
     public ResponseEntity<?> authenticate(LoginRequest request, HttpServletResponse response) {
 
-        User targetUser = userRepository.findByEmail(request.getEmail()).orElseThrow();
-
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(targetUser.getUserId().toString(), request.getPassword()));
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
+        User targetUser = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         String jwtToken = jwtService.genJwt(targetUser);
 
@@ -78,12 +91,12 @@ public class UserService {
         cookie.setSecure(true);
         AuthResponse responseBody = AuthResponse.builder().status(HttpStatus.OK).token(jwtToken).build();
         response.addCookie(cookie);
+
         return ResponseEntity.ok().body(responseBody);
     }
 
     public ResponseEntity<?> sendPasswordResetEmail(ForgotPasswordRequest reqBody)
             throws AppException, MessagingException, IOException {
-        ZoneId userTimeZone = ZoneId.systemDefault();
         ZonedDateTime now = ZonedDateTime.now(userTimeZone);
         User targetUser = userRepository.findByEmail(reqBody.getEmail())
                 .orElseThrow(() -> new AppException("Could not found this email : " + reqBody.getEmail()));
@@ -107,11 +120,11 @@ public class UserService {
                     passwordResetToken.setBlackList(false);
                 }
             } else {
-                if (passwordResetToken.getAttemptCounter() < 2) {
-                    passwordResetToken.setAttemptCounter(passwordResetToken.getAttemptCounter() + 1);
+                passwordResetToken.setAttemptCounter(passwordResetToken.getAttemptCounter() + 1);
 
-                } else {
+                if (passwordResetToken.getAttemptCounter() == 3) {
                     passwordResetToken.setBlackList(true);
+
                 }
             }
 
@@ -128,10 +141,25 @@ public class UserService {
 
     public RedirectView verifyPasswordResetToken(String token) {
         PasswordResetToken validToken = passwordResetTokenRepository.findByToken(token);
-        if (validToken == null) {
-            return new RedirectView("rickroll");
-        }
-        return new RedirectView("http://127.0.0.1:3000");
+        ZonedDateTime iat = validToken.getIat().withZoneSameInstant(userTimeZone);
+        ZonedDateTime current = ZonedDateTime.now(userTimeZone);
 
+        if (validToken == null || iat.plusMinutes(10).compareTo(current) < 0) {
+            return new RedirectView("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+        }
+        return new RedirectView("http://127.0.0.1:3000/resetPassword/" + validToken.getToken());
+
+    }
+
+    public RedirectView updatePassword(String newPassword, String passwordResetToken) {
+
+        // verify passwordReset token
+
+        // update userPassword and their update at
+
+        // delete the passwordReset token in the DB
+
+        // redirect to the login page.
+        return new RedirectView("http://127.0.0.1:3000/main");
     }
 }
