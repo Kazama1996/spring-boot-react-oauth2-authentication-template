@@ -60,4 +60,9 @@ public class AuthController {
     public RedirectView updatePassword(@RequestBody String newPassword, @PathVariable String passwordResetToken) {
         return userService.updatePassword(newPassword, passwordResetToken);
     }
+
+    @GetMapping("/testRequest")
+    public String TestRequest() {
+        return "Test";
+    }
 }

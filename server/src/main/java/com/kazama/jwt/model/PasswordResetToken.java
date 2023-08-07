@@ -40,10 +40,4 @@ public class PasswordResetToken {
     @Column(name = "iat", nullable = false)
     private ZonedDateTime iat;
 
-    @Column(name = "attempt_counter")
-    private int attemptCounter;
-
-    @Column(name = "blacklist")
-    private boolean isBlackList;
-
 }

@@ -19,19 +19,25 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.kazama.jwt.exception.AppException;
 import com.kazama.jwt.exception.AuthenticationError;
+import com.kazama.jwt.exception.RequestLimitExceededException;
 
 @ControllerAdvice
 public class GlobalExpectionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<?> handleException(AppException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    public ResponseEntity<?> handleException(AppException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
     @ExceptionHandler({ UsernameNotFoundException.class, BadCredentialsException.class })
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<?> handleAccountStatusException(Exception ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("username or password is incorrect");
+    }
+
+    @ExceptionHandler(RequestLimitExceededException.class)
+    public ResponseEntity<?> handleRequestLimitExceeded(RequestLimitExceededException ex) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ex.getMessage());
     }
 
 }

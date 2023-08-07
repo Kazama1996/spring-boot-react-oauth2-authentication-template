@@ -103,32 +103,37 @@ public class UserService {
 
         String token = UUID.randomUUID().toString();
 
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByEmail(reqBody.getEmail());
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByEmail(reqBody.getEmail()).orElse(
+                PasswordResetToken.builder().email(targetUser.getEmail()).iat(now)
+                        .token(token).build());
 
-        if (passwordResetToken == null) {
-            passwordResetToken = PasswordResetToken.builder().email(targetUser.getEmail()).attemptCounter(1)
-                    .isBlackList(false).token(token).build();
+        // if (passwordResetToken == null) {
+        // passwordResetToken =
+        // PasswordResetToken.builder().email(targetUser.getEmail()).attemptCounter(1)
+        // .isBlackList(false).token(token).build();
 
-        } else {
-            ZonedDateTime iat = passwordResetToken.getIat().withZoneSameInstant(userTimeZone);
-            if (passwordResetToken.isBlackList()) {
-                if (iat.plusDays(1)
-                        .compareTo(ZonedDateTime.now(userTimeZone)) > 0) {
-                    throw new AppException("Too many attempt");
-                } else {
-                    passwordResetToken.setAttemptCounter(1);
-                    passwordResetToken.setBlackList(false);
-                }
-            } else {
-                passwordResetToken.setAttemptCounter(passwordResetToken.getAttemptCounter() + 1);
+        // } else {
+        // ZonedDateTime iat =
+        // passwordResetToken.getIat().withZoneSameInstant(userTimeZone);
+        // if (passwordResetToken.isBlackList()) {
+        // if (iat.plusDays(1)
+        // .compareTo(ZonedDateTime.now(userTimeZone)) > 0) {
+        // throw new AppException("Too many attempt");
+        // } else {
+        // passwordResetToken.setAttemptCounter(1);
+        // passwordResetToken.setBlackList(false);
+        // }
+        // } else {
+        // passwordResetToken.setAttemptCounter(passwordResetToken.getAttemptCounter() +
+        // 1);
 
-                if (passwordResetToken.getAttemptCounter() == 3) {
-                    passwordResetToken.setBlackList(true);
+        // if (passwordResetToken.getAttemptCounter() == 3) {
+        // passwordResetToken.setBlackList(true);
 
-                }
-            }
+        // }
+        // }
 
-        }
+        // }
         passwordResetToken.setIat(now.plusMinutes(10));
 
         passwordResetTokenRepository.save(passwordResetToken);
