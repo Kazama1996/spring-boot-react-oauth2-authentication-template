@@ -23,14 +23,18 @@ import com.kazama.jwt.dao.UserRepository;
 import com.kazama.jwt.dto.request.AuthRequest;
 import com.kazama.jwt.dto.request.ForgotPasswordRequest;
 import com.kazama.jwt.dto.request.LoginRequest;
+import com.kazama.jwt.dto.request.UpdatePasswordRequest;
 import com.kazama.jwt.dto.response.AuthResponse;
 import com.kazama.jwt.exception.AppException;
+import com.kazama.jwt.exception.InvalidTokenException;
 import com.kazama.jwt.model.PasswordResetToken;
 import com.kazama.jwt.model.User;
 
+import ch.qos.logback.core.model.Model;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 
 import static com.kazama.jwt.Security.Role.*;
 
@@ -53,6 +57,34 @@ public class UserService {
 
     private final ZoneId userTimeZone = ZoneId.systemDefault();
 
+    private PasswordResetToken passwordResetToken;
+
+    private void assignTokentoCookie(String tokenName, String token, HttpServletResponse response) {
+        Cookie cookie = new Cookie(tokenName, token);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+    }
+
+    private PasswordResetToken isPasswordResetTokenValid(String token) {
+        PasswordResetToken validToken = passwordResetTokenRepository.findByToken(token)
+                .orElseThrow(() -> new InvalidTokenException("Token is Invalid"));
+        ZonedDateTime iat = validToken.getIat().withZoneSameInstant(userTimeZone);
+        ZonedDateTime now = ZonedDateTime.now(userTimeZone);
+        if (iat.plusMinutes(10).compareTo(now) < 0) {
+            throw new InvalidTokenException("Token is Expire");
+        }
+        return validToken;
+    }
+
+    private User findTokenOwner(String token) {
+        PasswordResetToken passwordResetToken = isPasswordResetTokenValid(token);
+
+        User reqUser = userRepository.findByEmail(passwordResetToken.getEmail())
+                .orElseThrow(() -> new InvalidTokenException("Token is invalid"));
+        return reqUser;
+    }
+
     public ResponseEntity<?> createUser(AuthRequest request, HttpServletResponse response) {
 
         if (userRepository.existsByemail(request.getEmail())) {
@@ -64,14 +96,13 @@ public class UserService {
         }
 
         String password = request.getPassword();
-        Instant current = Instant.now();
+        ZonedDateTime now = ZonedDateTime.now(userTimeZone);
         User user = User.builder().fullName(request.getFullName()).profileName(request.getProfileName())
-                .email(request.getEmail()).password(passwordEncoder.encode(password)).updateAt(current).role(USER)
+                .email(request.getEmail()).password(passwordEncoder.encode(password)).updateAt(now).role(USER)
                 .build();
         userRepository.save(user);
         String jwtToken = jwtService.genJwt(user);
-        Cookie cookie = new Cookie("jwt", jwtToken);
-        response.addCookie(cookie);
+        assignTokentoCookie("jwt", jwtToken, response);
         AuthResponse responseBody = AuthResponse.builder().status(HttpStatus.CREATED).token(jwtToken).build();
         return ResponseEntity.ok().body(responseBody);
     }
@@ -86,11 +117,9 @@ public class UserService {
 
         String jwtToken = jwtService.genJwt(targetUser);
 
-        Cookie cookie = new Cookie("jwt", jwtToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        assignTokentoCookie("jwt", jwtToken, response);
+
         AuthResponse responseBody = AuthResponse.builder().status(HttpStatus.OK).token(jwtToken).build();
-        response.addCookie(cookie);
 
         return ResponseEntity.ok().body(responseBody);
     }
@@ -103,33 +132,39 @@ public class UserService {
 
         String token = UUID.randomUUID().toString();
 
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByEmail(reqBody.getEmail());
+        passwordResetToken = passwordResetTokenRepository.findByEmail(reqBody.getEmail()).orElse(
+                PasswordResetToken.builder().email(targetUser.getEmail()).iat(now).build());
 
-        if (passwordResetToken == null) {
-            passwordResetToken = PasswordResetToken.builder().email(targetUser.getEmail()).attemptCounter(1)
-                    .isBlackList(false).token(token).build();
+        // if (passwordResetToken == null) {
+        // passwordResetToken =
+        // PasswordResetToken.builder().email(targetUser.getEmail()).attemptCounter(1)
+        // .isBlackList(false).token(token).build();
 
-        } else {
-            ZonedDateTime iat = passwordResetToken.getIat().withZoneSameInstant(userTimeZone);
-            if (passwordResetToken.isBlackList()) {
-                if (iat.plusDays(1)
-                        .compareTo(ZonedDateTime.now(userTimeZone)) > 0) {
-                    throw new AppException("Too many attempt");
-                } else {
-                    passwordResetToken.setAttemptCounter(1);
-                    passwordResetToken.setBlackList(false);
-                }
-            } else {
-                passwordResetToken.setAttemptCounter(passwordResetToken.getAttemptCounter() + 1);
+        // } else {
+        // ZonedDateTime iat =
+        // passwordResetToken.getIat().withZoneSameInstant(userTimeZone);
+        // if (passwordResetToken.isBlackList()) {
+        // if (iat.plusDays(1)
+        // .compareTo(ZonedDateTime.now(userTimeZone)) > 0) {
+        // throw new AppException("Too many attempt");
+        // } else {
+        // passwordResetToken.setAttemptCounter(1);
+        // passwordResetToken.setBlackList(false);
+        // }
+        // } else {
+        // passwordResetToken.setAttemptCounter(passwordResetToken.getAttemptCounter() +
+        // 1);
 
-                if (passwordResetToken.getAttemptCounter() == 3) {
-                    passwordResetToken.setBlackList(true);
+        // if (passwordResetToken.getAttemptCounter() == 3) {
+        // passwordResetToken.setBlackList(true);
 
-                }
-            }
+        // }
+        // }
 
-        }
+        // }
         passwordResetToken.setIat(now.plusMinutes(10));
+
+        passwordResetToken.setToken(token);
 
         passwordResetTokenRepository.save(passwordResetToken);
 
@@ -139,27 +174,27 @@ public class UserService {
 
     }
 
-    public RedirectView verifyPasswordResetToken(String token) {
-        PasswordResetToken validToken = passwordResetTokenRepository.findByToken(token);
-        ZonedDateTime iat = validToken.getIat().withZoneSameInstant(userTimeZone);
-        ZonedDateTime current = ZonedDateTime.now(userTimeZone);
+    public RedirectView redirectUpdatePasswordPage(String token) {
+        PasswordResetToken passwordResetToken = isPasswordResetTokenValid(token);
 
-        if (validToken == null || iat.plusMinutes(10).compareTo(current) < 0) {
-            return new RedirectView("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-        }
-        return new RedirectView("http://127.0.0.1:3000/resetPassword/" + validToken.getToken());
-
+        return new RedirectView("http://127.0.0.1:3000/resetPassword?token=" + passwordResetToken.getToken());
     }
 
-    public RedirectView updatePassword(String newPassword, String passwordResetToken) {
+    @Transactional
+    public ResponseEntity<?> updatePassword(UpdatePasswordRequest reqBody) {
+
+        ZonedDateTime now = ZonedDateTime.now(userTimeZone);
 
         // verify passwordReset token
+        User reqUser = findTokenOwner(reqBody.getPasswordResetToken());
 
-        // update userPassword and their update at
+        reqUser.setPassword(passwordEncoder.encode(reqBody.getNewPassword()));
+        reqUser.setUpdateAt(now);
+        userRepository.save(reqUser);
 
         // delete the passwordReset token in the DB
-
+        passwordResetTokenRepository.deleteByEmail(reqUser.getEmail());
         // redirect to the login page.
-        return new RedirectView("http://127.0.0.1:3000/main");
+        return ResponseEntity.ok().body("Your password already update");
     }
 }

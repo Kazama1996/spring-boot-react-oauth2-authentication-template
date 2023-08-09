@@ -18,6 +18,10 @@ spring:
     port: 587
     username: e07ff8ae1ad60b
     password: f11bee4a526156
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
 
 env:
   jwtSecret: fb768f20b553eb5788426e96d983275382e796121f850d7ad4b2a59aa9b63b5f

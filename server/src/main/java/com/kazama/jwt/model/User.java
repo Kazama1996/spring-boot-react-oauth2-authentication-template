@@ -1,6 +1,7 @@
 package com.kazama.jwt.model;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -54,8 +55,7 @@ public class User implements UserDetails {
     @Column(name = "full_name", length = 100)
     private String fullName;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Instant updateAt;
+    private ZonedDateTime updateAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
