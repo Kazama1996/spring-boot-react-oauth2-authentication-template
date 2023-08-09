@@ -16,16 +16,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.kazama.jwt.exception.AppException;
 import com.kazama.jwt.exception.AuthenticationError;
 import com.kazama.jwt.exception.RequestLimitExceededException;
+import com.kazama.jwt.exception.InvalidTokenException;
 
 @ControllerAdvice
 public class GlobalExpectionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<?> handleException(AppException ex) {
+    public ResponseEntity<?> handleAppException(AppException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
@@ -38,6 +40,12 @@ public class GlobalExpectionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RequestLimitExceededException.class)
     public ResponseEntity<?> handleRequestLimitExceeded(RequestLimitExceededException ex) {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public RedirectView handleInvalidToken(InvalidTokenException ex) {
+        // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+        return new RedirectView("http://127.0.0.1:3000/login?tokenInvalid=true");
     }
 
 }

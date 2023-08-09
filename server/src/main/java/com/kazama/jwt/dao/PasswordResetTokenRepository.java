@@ -11,7 +11,9 @@ import com.kazama.jwt.model.PasswordResetToken;
 @Repository
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, UUID> {
 
-    PasswordResetToken findByToken(String token);
+    Optional<PasswordResetToken> findByToken(String token);
 
     Optional<PasswordResetToken> findByEmail(String email);
+
+    void deleteByEmail(String email);
 }
