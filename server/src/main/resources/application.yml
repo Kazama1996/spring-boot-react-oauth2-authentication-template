@@ -22,6 +22,18 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6379
-
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 884481620426-enftntsf6gmi4m91k6p7t4v6u28rqkkh.apps.googleusercontent.com
+            client-secret: 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
+  thymeleaf:
+    cache:  false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML5
 env:
   jwtSecret: fb768f20b553eb5788426e96d983275382e796121f850d7ad4b2a59aa9b63b5f

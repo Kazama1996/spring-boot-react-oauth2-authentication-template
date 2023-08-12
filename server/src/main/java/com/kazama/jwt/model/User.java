@@ -1,6 +1,5 @@
 package com.kazama.jwt.model;
 
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -10,7 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.kazama.jwt.Security.Role;
+import com.kazama.jwt.config.security.AuthProvider;
+import com.kazama.jwt.config.security.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,14 +20,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.persistence.UniqueConstraint;
-import lombok.AccessLevel;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
@@ -60,6 +56,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider")
+    private AuthProvider authProvider;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,4 +1,4 @@
-package com.kazama.jwt.Security;
+package com.kazama.jwt.config.security;
 
 public enum Role {
     USER,
