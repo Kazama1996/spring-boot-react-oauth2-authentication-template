@@ -1,23 +1,21 @@
 package com.kazama.jwt.service;
 
+import static com.kazama.jwt.config.security.Role.*;
+
 import java.io.IOException;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.kazama.jwt.Security.JwtService;
 import com.kazama.jwt.dao.PasswordResetTokenRepository;
 import com.kazama.jwt.dao.UserRepository;
 import com.kazama.jwt.dto.request.AuthRequest;
@@ -29,15 +27,12 @@ import com.kazama.jwt.exception.AppException;
 import com.kazama.jwt.exception.InvalidTokenException;
 import com.kazama.jwt.model.PasswordResetToken;
 import com.kazama.jwt.model.User;
+import com.kazama.jwt.util.JWT.JwtService;
 
-import ch.qos.logback.core.model.Model;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-
-import static com.kazama.jwt.Security.Role.*;
-
 import lombok.RequiredArgsConstructor;
 
 @Service

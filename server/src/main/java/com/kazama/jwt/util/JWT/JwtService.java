@@ -1,4 +1,4 @@
-package com.kazama.jwt.Security;
+package com.kazama.jwt.util.JWT;
 
 import java.security.Key;
 import java.time.ZoneId;
