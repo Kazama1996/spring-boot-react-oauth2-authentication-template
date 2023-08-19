@@ -16,15 +16,17 @@ import com.kazama.jwt.security.oauth2.UserPrincipal;
 import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
+        System.out.println("loadUserByUserEmail");
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        System.out.println("User: " +user.toString());
         return UserPrincipal.create(user);
     }
 

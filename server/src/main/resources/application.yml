@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/outsta9ram  
     username: postgres     # fill your username of database       
-    password: postgres     #  fill your password of database
+    password: admin     #  fill your password of database
     driver-class-name: org.postgresql.Driver         # PostgreSQL driver class
 
   jpa:

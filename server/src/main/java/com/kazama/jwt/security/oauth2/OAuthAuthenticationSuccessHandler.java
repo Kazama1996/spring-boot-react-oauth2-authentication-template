@@ -35,13 +35,14 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        String targetUrl = determineTargetUrl(request, response, authentication);
-        if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
-            return;
-        }
-        clearAuthenticationAttributes(request, response);
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        // String targetUrl = determineTargetUrl(request, response, authentication);
+        // if (response.isCommitted()) {
+        //     logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+        //     return;
+        // }
+        // clearAuthenticationAttributes(request, response);
+        // getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        System.out.println("onAuthenticationSuccess");
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {

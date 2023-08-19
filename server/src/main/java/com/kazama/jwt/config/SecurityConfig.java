@@ -51,17 +51,19 @@ public class SecurityConfig {
                                                                 .requestMatchers("/oauth2/**")
                                                                 .permitAll()
                                                                 .anyRequest().authenticated())
-                                .httpBasic(basic -> basic.authenticationEntryPoint(authenticationEntryPoint))
+                                .httpBasic(basic -> basic.disable())
+                                .exceptionHandling(handling->handling.authenticationEntryPoint(authenticationEntryPoint))
                                 .authenticationProvider(authenticationProvider)
-                                /// oauth2/authorize
-                                // .oauth2Login(login -> login
-                                // .authorizationEndpoint(endpoint -> endpoint
-                                // .baseUri("/oauth2/authorize")
-                                // .authorizationRequestRepository(
-                                // cookieOAuth2AuthorizationRequestRepository()))
-                                // .userInfoEndpoint(info -> info.userService(customOAuth2UserService))
-                                // .redirectionEndpoint(endpoint -> endpoint
-                                // .baseUri("/oauth2/callback/*")))
+                                // oauth2/authorize
+                                .oauth2Login(login -> login
+                                        .authorizationEndpoint(endpoint -> endpoint
+                                                .baseUri("/oauth2/authorize")
+                                        .authorizationRequestRepository(
+                                                cookieOAuth2AuthorizationRequestRepository()))
+                                        .userInfoEndpoint(info -> info.userService                 (customOAuth2UserService))
+                                .redirectionEndpoint(endpoint -> endpoint
+                                .baseUri("/oauth2/callback/*"))
+                                .successHandler(oAuthAuthenticationSuccessHandler).failureHandler(oAuthenticationFailureHandler))
 
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                                 .build();

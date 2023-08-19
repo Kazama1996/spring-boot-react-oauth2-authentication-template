@@ -105,16 +105,18 @@ public class UserService {
     }
 
     public ResponseEntity<?> authenticate(LoginRequest request, HttpServletResponse response) {
-
+        System.out.println("NMSL : authenticate");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-
+        System.out.println("NMSL");
         User targetUser = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
+        System.out.println("findByEmail");
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        System.out.println("getContext to contextHolder");
+        
         String jwtToken = jwtService.genJwt(targetUser);
+        System.out.println("gen JWT");
 
         assignTokentoCookie("jwt", jwtToken, response);
 
