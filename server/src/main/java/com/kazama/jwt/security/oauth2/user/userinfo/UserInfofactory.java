@@ -1,4 +1,4 @@
-package com.kazama.jwt.config.security.oauth2.user.userinfo;
+package com.kazama.jwt.security.oauth2.user.userinfo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

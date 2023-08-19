@@ -1,13 +1,16 @@
 package com.kazama.jwt.util.JWT;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.security.Key;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.kazama.jwt.model.User;
@@ -26,12 +29,12 @@ public class JwtService {
     private final ZoneId userTimeZone = ZoneId.systemDefault();
 
     public String genJwt(User user) {
-        return genJwt(new HashMap<>(), user);
+        return genJwt(new HashMap<>(), user.getUserId().toString());
     }
 
-    public String genJwt(Map<String, Object> claims, User user) {
+    public String genJwt(Map<String, Object> claims, String userId) {
 
-        return Jwts.builder().setClaims(claims).setSubject(user.getUserId().toString())
+        return Jwts.builder().setClaims(claims).setSubject(userId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 604800000L))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
@@ -51,9 +54,9 @@ public class JwtService {
         return claimsSolver.apply(claims);
     }
 
-    public boolean isTokenValid(String token, User user) {
-        final String userId = extractUserId(token);
-        return user.getUserId().toString().equals(userId) && !isTokenExpire(token);
+    public boolean isTokenValid(String token, UUID userId) {
+        final String tokenUserId = extractUserId(token);
+        return userId.toString().equals(userId) && !isTokenExpire(token);
     }
 
     public boolean isTokenExpire(String token) {

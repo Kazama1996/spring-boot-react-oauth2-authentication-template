@@ -1,4 +1,4 @@
-package com.kazama.jwt.config.security;
+package com.kazama.jwt.security;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.kazama.jwt.model.User;
+import com.kazama.jwt.security.oauth2.CustomOAuth2UserService;
+import com.kazama.jwt.security.oauth2.UserPrincipal;
 import com.kazama.jwt.util.JWT.JwtService;
 
 import jakarta.servlet.FilterChain;
@@ -27,13 +30,15 @@ import lombok.AllArgsConstructor;
 public class JWTFilter extends OncePerRequestFilter {
     private JwtService jwtService;
 
-    private UserDetailsService userDetailsService;
+    private CustomUserDetailsService customUserDetailsService;
 
     private final List<String> shouldNotFilterMatchers = new ArrayList<>();
 
     public JWTFilter() {
         shouldNotFilterMatchers.add("/api/v1/auth");
         shouldNotFilterMatchers.add("/hello");
+        shouldNotFilterMatchers.add("/login/oauth2");
+        shouldNotFilterMatchers.add("/oatuh2/authorization");
 
     }
 
@@ -58,10 +63,10 @@ public class JWTFilter extends OncePerRequestFilter {
         }
         userId = jwtService.extractUserId(jwtToken);
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User userDetails = (User) this.userDetailsService.loadUserByUsername(userId);
-            if (jwtService.isTokenValid(jwtToken, userDetails)) {
+            UserPrincipal userPrincipal = this.customUserDetailsService.loadByUserId(userId);
+            if (jwtService.isTokenValid(jwtToken, userPrincipal.getUserId())) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails.getUserId(), null, userDetails.getAuthorities());
+                    userPrincipal.getUserId(), null, userPrincipal.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
@@ -73,7 +78,10 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
+        System.out.println("--------------------------------------");
+        System.out.println(path);
+        System.out.println("--------------------------------------");
 
-        return shouldNotFilterMatchers.stream().anyMatch(matcher -> matcher.startsWith(path));
+        return shouldNotFilterMatchers.stream().anyMatch(matcher -> path.startsWith(matcher));
     }
 }

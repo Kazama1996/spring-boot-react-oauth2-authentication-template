@@ -1,4 +1,4 @@
-package com.kazama.jwt.config.security;
+package com.kazama.jwt.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

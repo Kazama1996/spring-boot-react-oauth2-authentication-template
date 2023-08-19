@@ -1,11 +1,11 @@
-package com.kazama.jwt.config.security.oauth2.user.userinfo.ipml;
+package com.kazama.jwt.security.oauth2.user.userinfo.ipml;
 
 import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import com.kazama.jwt.config.security.oauth2.user.userinfo.OAuth2UserInfo;
-import com.kazama.jwt.config.security.oauth2.user.userinfo.UserInfofactory;
+import com.kazama.jwt.security.oauth2.user.userinfo.OAuth2UserInfo;
+import com.kazama.jwt.security.oauth2.user.userinfo.UserInfofactory;
 
 public class GoogleOAuth2UserInfo implements OAuth2UserInfo, InitializingBean {
 

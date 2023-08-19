@@ -10,46 +10,60 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults;
+import com.kazama.jwt.security.JWTFilter;
+import com.kazama.jwt.security.oauth2.CustomOAuth2UserService;
+import com.kazama.jwt.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.kazama.jwt.security.oauth2.OAuthAuthenticationSuccessHandler;
+import com.kazama.jwt.security.oauth2.OAuthenticationFailureHandler;
 
-import com.kazama.jwt.config.security.JWTFilter;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Configuration
 public class SecurityConfig {
-    @Autowired
-    @Qualifier("delegatedAuthenticationEntryPoint")
-    private AuthenticationEntryPoint authenticationEntryPoint;
+        @Autowired
+        @Qualifier("delegatedAuthenticationEntryPoint")
+        private AuthenticationEntryPoint authenticationEntryPoint;
 
-    private AuthenticationProvider authenticationProvider;
+        private AuthenticationProvider authenticationProvider;
 
-    private JWTFilter jwtFilter;
+        private JWTFilter jwtFilter;
 
-    @Bean
-    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        private CustomOAuth2UserService customOAuth2UserService;
 
-        // http.csrf(csrf -> csrf.disable());
-        // http.authorizeHttpRequests(
-        // auth ->
-        // auth.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated());
-        // http.httpBasic(withDefaults());
-        // http.httpBasic(basic ->
-        // basic.authenticationEntryPoint(authenticationEntryPoint));
-        // http.authenticationProvider(authenticationProvider);
-        // http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        private OAuthenticationFailureHandler oAuthenticationFailureHandler;
 
-        // return http.build();
+        private OAuthAuthenticationSuccessHandler oAuthAuthenticationSuccessHandler;
 
-        return http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/api/v1/auth/**").permitAll().requestMatchers("/hello")
-                                .permitAll()
-                                .anyRequest().authenticated())
-                .httpBasic(basic -> basic.authenticationEntryPoint(authenticationEntryPoint))
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
+        @Bean
+        public HttpCookieOAuth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository() {
+                return new HttpCookieOAuth2AuthorizationRequestRepository();
+        }
+
+        @Bean
+        protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+                return http.csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(
+                                                auth -> auth.requestMatchers("/api/v1/auth/**").permitAll()
+                                                                .requestMatchers("/oauth2/**")
+                                                                .permitAll()
+                                                                .anyRequest().authenticated())
+                                .httpBasic(basic -> basic.authenticationEntryPoint(authenticationEntryPoint))
+                                .authenticationProvider(authenticationProvider)
+                                /// oauth2/authorize
+                                // .oauth2Login(login -> login
+                                // .authorizationEndpoint(endpoint -> endpoint
+                                // .baseUri("/oauth2/authorize")
+                                // .authorizationRequestRepository(
+                                // cookieOAuth2AuthorizationRequestRepository()))
+                                // .userInfoEndpoint(info -> info.userService(customOAuth2UserService))
+                                // .redirectionEndpoint(endpoint -> endpoint
+                                // .baseUri("/oauth2/callback/*")))
+
+                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                                .build();
+        }
 }

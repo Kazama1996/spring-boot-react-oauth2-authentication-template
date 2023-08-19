@@ -38,10 +38,10 @@ public class AuthController {
         return userService.createUser(reqBody, response);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/authentication")
     public ResponseEntity<?> login(@RequestBody LoginRequest reqBody, HttpServletResponse response) {
-
         return userService.authenticate(reqBody, response);
+
     }
 
     @PostMapping("/forgotPassowrd")

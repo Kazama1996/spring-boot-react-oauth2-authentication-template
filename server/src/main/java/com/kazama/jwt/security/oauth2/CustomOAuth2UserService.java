@@ -1,7 +1,10 @@
-package com.kazama.jwt.config.security.oauth2.user;
+package com.kazama.jwt.security.oauth2;
 
 import java.nio.file.attribute.UserPrincipal;
 
+import javax.naming.AuthenticationException;
+
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -9,12 +12,12 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.kazama.jwt.config.security.AuthProvider;
-import com.kazama.jwt.config.security.oauth2.user.userinfo.OAuth2UserInfo;
-import com.kazama.jwt.config.security.oauth2.user.userinfo.UserInfofactory;
 import com.kazama.jwt.dao.UserRepository;
 import com.kazama.jwt.exception.security.OAuth2AuthenticationProcessingException;
 import com.kazama.jwt.model.User;
+import com.kazama.jwt.security.AuthProvider;
+import com.kazama.jwt.security.oauth2.user.userinfo.OAuth2UserInfo;
+import com.kazama.jwt.security.oauth2.user.userinfo.UserInfofactory;
 
 import lombok.AllArgsConstructor;
 
@@ -66,8 +69,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        System.out.println("******************************************************");
+        System.out.println("Welcome oauthUser" + oAuth2User);
+        System.out.println("******************************************************");
+        try {
+            oAuth2User = processOauth2User(userRequest, oAuth2User);
+        } catch (OAuth2AuthenticationProcessingException e) {
+            // TODO Auto-generated catch block
+            System.out.println(e.getMessage());
+        }
+        return oAuth2User;
 
-        return null;
     }
 
 }
