@@ -1,9 +1,11 @@
 package com.kazama.jwt.security.oauth2;
 
 import java.nio.file.attribute.UserPrincipal;
+import java.time.ZonedDateTime;
 
 import javax.naming.AuthenticationException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,20 +18,44 @@ import com.kazama.jwt.dao.UserRepository;
 import com.kazama.jwt.exception.security.OAuth2AuthenticationProcessingException;
 import com.kazama.jwt.model.User;
 import com.kazama.jwt.security.AuthProvider;
+import com.kazama.jwt.security.Role;
 import com.kazama.jwt.security.oauth2.user.userinfo.OAuth2UserInfo;
 import com.kazama.jwt.security.oauth2.user.userinfo.UserInfofactory;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Service
+@NoArgsConstructor
 @AllArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+
+    @Autowired
     private UserRepository userRepository;
 
-    private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        System.out.println("******************************************************");
+        System.out.println("Welcome oauthUser" + oAuth2User);
+        System.out.println("******************************************************");
+        try {
+            oAuth2User = processOauth2User(userRequest, oAuth2User);
+        } catch (OAuth2AuthenticationProcessingException e) {
+            // TODO Auto-generated catch block
+            System.out.println(e.getMessage());
+        }
+        return oAuth2User;
 
+    }
+
+    private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         User user = User.builder()
                 .authProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))
+                .profileName(oAuth2UserInfo.getName())
+                .fullName(oAuth2UserInfo.getName())
+                .email(oAuth2UserInfo.getEmail())
+                .role(Role.USER)
                 .build();
 
         return userRepository.save(user);
@@ -46,7 +72,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throws OAuth2AuthenticationProcessingException {
         String infoType = oAuth2UserRequest.getClientRegistration().getRegistrationId();
         OAuth2UserInfo oAuth2UserInfo = UserInfofactory
-                .getByInfoType(infoType);
+                .getByInfoType(infoType, oAuth2User.getAttributes());
         if (!StringUtils.hasText(oAuth2UserInfo.getEmail())) {
             throw new OAuth2AuthenticationProcessingException("Email not found from your provider");
         }
@@ -63,22 +89,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         updateExistingUser(user, oAuth2UserInfo);
         return null;
-
-    }
-
-    @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println("******************************************************");
-        System.out.println("Welcome oauthUser" + oAuth2User);
-        System.out.println("******************************************************");
-        try {
-            oAuth2User = processOauth2User(userRequest, oAuth2User);
-        } catch (OAuth2AuthenticationProcessingException e) {
-            // TODO Auto-generated catch block
-            System.out.println(e.getMessage());
-        }
-        return oAuth2User;
 
     }
 

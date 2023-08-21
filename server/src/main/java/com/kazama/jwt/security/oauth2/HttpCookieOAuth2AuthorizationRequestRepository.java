@@ -33,10 +33,10 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request,
             HttpServletResponse response) {
-        System.out.println("saveAuthorizationRequest");
+        System.out.println("saveAuthorizationRequest : start");
 
         if (authorizationRequest == null) {
-            System.out.println("authorizationRequest==null");
+            System.out.println("saveAuthorizationRequest : authorizationRequest==null");
             CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY);
             CookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_KEY);
             return;
@@ -44,7 +44,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
         try {
             CookieUtils.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY,
                     CookieUtils.serialize(authorizationRequest), cookieExpireSeconds);
-            System.out.println("saveAuthorizationRequest addCookie");
+            System.out.println("saveAuthorizationRequest: addCookie OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY");
 
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
@@ -53,12 +53,12 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
 
         String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_KEY);
 
-        System.out.println("redirectUriAfterLogin  " + redirectUriAfterLogin);
+        System.out.println("saveAuthorizationRequest  :  redirectUriAfterLogin  " + redirectUriAfterLogin);
         if (StringUtils.isNotBlank(redirectUriAfterLogin)) {
             try {
                 CookieUtils.addCookie(response, REDIRECT_URI_PARAM_COOKIE_KEY, redirectUriAfterLogin,
                         cookieExpireSeconds);
-                System.out.println("saveAuthorizationRequest addCookie REDIRECT_URI_PARAM_COOKIE_KEY");
+                System.out.println("saveAuthorizationRequest : addCookie REDIRECT_URI_PARAM_COOKIE_KEY");
 
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block

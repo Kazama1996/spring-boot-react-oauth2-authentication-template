@@ -3,18 +3,34 @@ package com.kazama.jwt.security.oauth2.user.userinfo.ipml;
 import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import com.kazama.jwt.security.AuthProvider;
 import com.kazama.jwt.security.oauth2.user.userinfo.OAuth2UserInfo;
 import com.kazama.jwt.security.oauth2.user.userinfo.UserInfofactory;
 
-public class GoogleOAuth2UserInfo implements OAuth2UserInfo, InitializingBean {
+import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@Component
+@AllArgsConstructor
+@NoArgsConstructor
+public class GoogleOAuth2UserInfo implements OAuth2UserInfo {
 
     private Map<String, Object> attributes;
 
+    @Autowired
     private UserInfofactory userInfofactory;
 
     public GoogleOAuth2UserInfo(Map<String, Object> attributes) {
         this.attributes = attributes;
+    }
+
+    @PostConstruct
+    private void init() {
+        userInfofactory.register(AuthProvider.google.toString(), this);
     }
 
     @Override
@@ -35,12 +51,6 @@ public class GoogleOAuth2UserInfo implements OAuth2UserInfo, InitializingBean {
     @Override
     public String getImageUrl() {
         return (String) attributes.get("picture");
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        // TODO Auto-generated method stub
-        userInfofactory.register("GOOGLE", this);
     }
 
 }

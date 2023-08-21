@@ -29,6 +29,7 @@ import com.kazama.jwt.exception.AppException;
 import com.kazama.jwt.exception.InvalidTokenException;
 import com.kazama.jwt.model.PasswordResetToken;
 import com.kazama.jwt.model.User;
+import com.kazama.jwt.security.AuthProvider;
 import com.kazama.jwt.util.JWT.JwtService;
 
 import jakarta.mail.MessagingException;
@@ -96,6 +97,7 @@ public class UserService {
         ZonedDateTime now = ZonedDateTime.now(userTimeZone);
         User user = User.builder().fullName(request.getFullName()).profileName(request.getProfileName())
                 .email(request.getEmail()).password(passwordEncoder.encode(password)).updateAt(now).role(USER)
+                .authProvider(AuthProvider.local)
                 .build();
         userRepository.save(user);
         String jwtToken = jwtService.genJwt(user);
@@ -114,7 +116,7 @@ public class UserService {
         System.out.println("findByEmail");
         SecurityContextHolder.getContext().setAuthentication(authentication);
         System.out.println("getContext to contextHolder");
-        
+
         String jwtToken = jwtService.genJwt(targetUser);
         System.out.println("gen JWT");
 
