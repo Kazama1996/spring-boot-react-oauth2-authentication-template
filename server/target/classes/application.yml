@@ -1,0 +1,53 @@
+server:
+  error:
+    include-stacktrace: never
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/outsta9ram  
+    username: postgres     # fill your username of database       
+    password: postgres     #  fill your password of database
+    driver-class-name: org.postgresql.Driver         # PostgreSQL driver class
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update        # Change to 'create' if you want to create tables on startup
+    properties:
+      hibernate:
+        format_sql: true     # Optional: Format SQL queries for readability
+        show_sql: false      # Optional: Show SQL queries in logs for debugging
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 587
+    username: e07ff8ae1ad60b
+    password: f11bee4a526156
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 884481620426-enftntsf6gmi4m91k6p7t4v6u28rqkkh.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope: 
+              - email
+              - profile
+
+  thymeleaf:
+    cache:  false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML5
+
+env:
+  jwtSecret: fb768f20b553eb5788426e96d983275382e796121f850d7ad4b2a59aa9b63b5f
+app:
+  oauth2:
+    authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
