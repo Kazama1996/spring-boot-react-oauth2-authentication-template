@@ -1,6 +1,7 @@
 server:
   error:
     include-stacktrace: never
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/outsta9ram  
@@ -46,3 +47,7 @@ spring:
 
 env:
   jwtSecret: fb768f20b553eb5788426e96d983275382e796121f850d7ad4b2a59aa9b63b5f
+app:
+  oauth2:
+    authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
