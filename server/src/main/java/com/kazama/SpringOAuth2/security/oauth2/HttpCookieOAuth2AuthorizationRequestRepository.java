@@ -101,10 +101,15 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
             Authentication authentication) throws UnsupportedEncodingException {
 
         OAuth2AuthenticationToken oauth2Authentication = (OAuth2AuthenticationToken) authentication;
-        Object principal = oauth2Authentication.getPrincipal();
-        DefaultOAuth2User oAuth2User = (DefaultOAuth2User) principal;
+        // Object principal = oauth2Authentication.getPrincipal();
 
-        String jwt = jwtService.genJwt(oAuth2User);
+        // System.out.println("--------------------getPrincipal---------------------------------");
+        // System.out.println(principal);
+        // System.out.println("-----------------------------------------------------");
+        // DefaultOAuth2User oAuth2User = (DefaultOAuth2User) principal;
+
+        // String jwt = jwtService.genJwt(oAuth2User);
+        String jwt = jwtService.genJwt(oauth2Authentication.getPrincipal());
 
         Cookie cookie = new Cookie("jwt", jwt);
         cookie.setPath("/");

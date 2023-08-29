@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -60,11 +59,16 @@ public class SecurityConfig {
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .cors(withDefaults())
                                 .authorizeHttpRequests(
-                                                auth -> auth.requestMatchers("/api/v1/auth/**", "/oauth2/**")
+
+                                                auth -> auth.requestMatchers("/api/v1/auth/**",
+                                                                "/oauth2/**",
+                                                                "/api-docs/**", "/swagger-ui/**")
+
                                                                 .permitAll()
                                                                 .requestMatchers("/",
                                                                                 "/error",
-                                                                                "/favicon.ico")
+                                                                                "/favicon.ico", "/swagger-ui.html",
+                                                                                "/v3/api-docs/**")
                                                                 .permitAll()
                                                                 .anyRequest().authenticated())
                                 .httpBasic(basic -> basic.disable())

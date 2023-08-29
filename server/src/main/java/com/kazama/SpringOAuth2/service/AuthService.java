@@ -88,6 +88,9 @@ public class AuthService {
         if (userRepository.existsByProfileName(request.getProfileName())) {
             throw new AppException("ProfileName :" + request.getProfileName() + " already exist");
         }
+        if (request.getPassword().length() < 8 || request.getPassword().length() > 14) {
+            throw new AppException("password must be contains 8 ~14 characters");
+        }
 
         String password = request.getPassword();
         ZonedDateTime now = ZonedDateTime.now(userTimeZone);
@@ -98,7 +101,7 @@ public class AuthService {
         userRepository.save(user);
         String jwtToken = jwtService.genJwt(user);
         CookieUtils.addCookie(response, "jwt", jwtToken, 0);
-        AuthResponse responseBody = AuthResponse.builder().status(HttpStatus.CREATED).token(jwtToken).build();
+        AuthResponse responseBody = AuthResponse.builder().token(jwtToken).build();
         return ResponseEntity.ok().body(responseBody);
     }
 
@@ -116,7 +119,7 @@ public class AuthService {
 
         CookieUtils.addCookie(response, "jwt", jwtToken, 0);
 
-        AuthResponse responseBody = AuthResponse.builder().status(HttpStatus.OK).token(jwtToken).build();
+        AuthResponse responseBody = AuthResponse.builder().token(jwtToken).build();
 
         return ResponseEntity.ok().body(responseBody);
     }

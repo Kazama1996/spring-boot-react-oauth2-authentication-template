@@ -44,6 +44,10 @@ spring:
     suffix: .html
     encoding: UTF-8
     mode: HTML5
+springdoc:
+  api-docs:
+    version: OPENAPI_3_0
+    path: /api-docs
 
 env:
   jwtSecret: fb768f20b553eb5788426e96d983275382e796121f850d7ad4b2a59aa9b63b5f

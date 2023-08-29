@@ -14,11 +14,14 @@ import com.kazama.SpringOAuth2.model.User;
 import com.kazama.SpringOAuth2.security.CurrentUser;
 import com.kazama.SpringOAuth2.security.oauth2.UserPrincipal;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NoArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @NoArgsConstructor
+@Tag(name = "Profile")
+
 public class UserController {
 
     @Autowired

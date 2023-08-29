@@ -10,6 +10,5 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @RequiredArgsConstructor
 public class AuthResponse {
-    private final HttpStatus status;
     private final String token;
 }
