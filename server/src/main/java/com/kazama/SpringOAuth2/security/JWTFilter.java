@@ -49,6 +49,10 @@ public class JWTFilter extends OncePerRequestFilter {
         shouldNotFilterMatchers.add("/hello");
         shouldNotFilterMatchers.add("/login/oauth2");
         shouldNotFilterMatchers.add("/oatuh2/authorization");
+        shouldNotFilterMatchers.add("/api-docs");
+        shouldNotFilterMatchers.add("/swagger-resources/**");
+        shouldNotFilterMatchers.add("/swagger-ui");
+        shouldNotFilterMatchers.add("/favicon.ico");
 
     }
 
@@ -113,6 +117,7 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
+        System.out.println(path + shouldNotFilterMatchers.stream().anyMatch(matcher -> path.startsWith(matcher)));
 
         return shouldNotFilterMatchers.stream().anyMatch(matcher -> path.startsWith(matcher));
     }
