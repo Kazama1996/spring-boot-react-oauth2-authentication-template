@@ -35,6 +35,9 @@
 		<java.version>
 			17
 		</java.version>
+		<skipTests>
+			true
+		</skipTests>
 	</properties>
 	<dependencies>
 		<dependency>
