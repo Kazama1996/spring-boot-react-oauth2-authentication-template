@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: 'postgres-container'
+    image: postgres:13
+    environment:
+      POSTGRES_DB: OAuth2
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    ports:
+    - "6379:6379"
+    expose:
+      - "6379"
+  spring-boot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-boot-container
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/OAuth2
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+volumes:
+  pgdata:
