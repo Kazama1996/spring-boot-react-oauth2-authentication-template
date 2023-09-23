@@ -12,7 +12,8 @@ import EmailProviderModal from "../../component/EmailProviderModal";
 import { SendForgotPasswordRequest, SendLoginRequest } from "../../Action/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import googleLogo from "../../material/img/google-logo.png";
-import { GOOGLE_AUTH_URL } from "../../constants/index.js";
+import fbLogo from "../../material/img/fb-logo.png";
+import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL } from "../../constants/index.js";
 const LoginPage = () => {
   const loginEmail = useRef("");
   const loginPassword = useRef("");
@@ -76,6 +77,12 @@ const LoginPage = () => {
     window.location.href = GOOGLE_AUTH_URL;
   };
 
+  const handleFacebookLogin = (event) => {
+    console.log("Handle Facebook Login");
+    event.preventDefault();
+    window.location.href = FACEBOOK_AUTH_URL;
+  };
+
   const handleChangeValue = (event) => {
     event.preventDefault();
     setLoginMessage("");
@@ -95,7 +102,7 @@ const LoginPage = () => {
               variant="light"
               style={{
                 border: "1px #dee2e6 solid",
-                margin: "30px 0px",
+                margin: "10px 0px",
                 width: "100%",
               }}
             >
@@ -105,6 +112,23 @@ const LoginPage = () => {
                 style={{ width: "30px", height: "30px" }}
               />
               Login with google
+            </Button>
+
+            <Button
+              onClick={handleFacebookLogin}
+              variant="light"
+              style={{
+                border: "1px #dee2e6 solid",
+                margin: "10px 0px",
+                width: "100%",
+              }}
+            >
+              <Image
+                src={fbLogo}
+                alt="Button Image"
+                style={{ width: "30px", height: "30px" }}
+              />
+              Login with Facebook
             </Button>
             <Form.Group controlId="formGroupEmail">
               <Form.Control
