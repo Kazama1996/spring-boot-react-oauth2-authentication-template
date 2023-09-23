@@ -2,6 +2,9 @@ package com.kazama.SpringOAuth2.service;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.kazama.SpringOAuth2.model.PasswordResetToken;
 import com.kazama.SpringOAuth2.model.User;
 
+import io.jsonwebtoken.io.IOException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -28,29 +32,32 @@ public class MailService {
         this.javaMailSender = javaMailSender;
     }
 
-    private static String convertHTMLtoString(String filePath) throws java.io.IOException {
+    private static String convertHTMLotString(Resource resource) throws java.io.IOException {
         StringBuilder content = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+        try (InputStream inputStream = resource.getInputStream();
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 content.append(line).append("\n");
             }
         }
         return content.toString();
+
     }
 
-    private static String genPasswordForgotMail(String filePath, User targetUser, PasswordResetToken token)
+    private static String genPasswordForgotMail(Resource resource, User targetUser, PasswordResetToken token)
             throws java.io.IOException {
-        String mailString = convertHTMLtoString(filePath);
+
+        String mailString = convertHTMLotString(resource);
         return mailString.replace("[ProfileName]", targetUser.getProfileName()).replace("[MY URL]",
                 "http://localhost:8080/api/v1/auth/passwordReset/" + token.getToken());
     }
 
     public void sendMail(User targetUser, PasswordResetToken newToken) throws MessagingException, java.io.IOException {
-        // SimpleMailMessage message = new SimpleMailMessage();
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        String content = genPasswordForgotMail(resource.getFile().getPath(), targetUser, newToken);
+        String content = genPasswordForgotMail(this.resource, targetUser, newToken);
 
         helper.setFrom(From);
         helper.setTo(targetUser.getEmail());
