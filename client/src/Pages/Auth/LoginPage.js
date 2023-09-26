@@ -12,8 +12,8 @@ import EmailProviderModal from "../../component/EmailProviderModal";
 import { SendForgotPasswordRequest, SendLoginRequest } from "../../Action/api";
 import { useNavigate, useLocation } from "react-router-dom";
 import googleLogo from "../../material/img/google-logo.png";
-import fbLogo from "../../material/img/fb-logo.png";
-import { GOOGLE_AUTH_URL, FACEBOOK_AUTH_URL } from "../../constants/index.js";
+import githubLogo from "../../material/img/github-logo.png";
+import { GOOGLE_AUTH_URL, GITHUB_AUTH_URL } from "../../constants/index.js";
 const LoginPage = () => {
   const loginEmail = useRef("");
   const loginPassword = useRef("");
@@ -77,10 +77,10 @@ const LoginPage = () => {
     window.location.href = GOOGLE_AUTH_URL;
   };
 
-  const handleFacebookLogin = (event) => {
-    console.log("Handle Facebook Login");
+  const handleGitHubLogin = (event) => {
+    console.log("Handle GitHub Login");
     event.preventDefault();
-    window.location.href = FACEBOOK_AUTH_URL;
+    window.location.href = GITHUB_AUTH_URL;
   };
 
   const handleChangeValue = (event) => {
@@ -115,7 +115,7 @@ const LoginPage = () => {
             </Button>
 
             <Button
-              onClick={handleFacebookLogin}
+              onClick={handleGitHubLogin}
               variant="light"
               style={{
                 border: "1px #dee2e6 solid",
@@ -124,11 +124,11 @@ const LoginPage = () => {
               }}
             >
               <Image
-                src={fbLogo}
+                src={githubLogo}
                 alt="Button Image"
                 style={{ width: "30px", height: "30px" }}
               />
-              Login with Facebook
+              Login with GitHub
             </Button>
             <Form.Group controlId="formGroupEmail">
               <Form.Control
