@@ -37,6 +37,14 @@ spring:
             scope: 
               - email
               - profile
+          github:
+            client-id: 7c43f7cc27bcad22b4ff
+            client-secret: f08ef4f1e710f81f45936832217a7da247347bf8 
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - user:email
+              - read:user
+
 
   thymeleaf:
     cache:  false
