@@ -24,5 +24,5 @@ export const SendUpdatePasswordRequest = (data) => {
 };
 
 export const GetUserProfile = () => {
-  return instance.get("/api/v1/users/test", customConfig);
+  return instance.get("/api/v1/users/private/currentuser", customConfig);
 };

@@ -60,9 +60,9 @@ public class SecurityConfig {
                                 .cors(withDefaults())
                                 .authorizeHttpRequests(
 
-                                                auth -> auth.requestMatchers("/api/v1/auth/**",
+                                                auth -> auth.requestMatchers(
                                                                 "/oauth2/**",
-                                                                "/api-docs/**", "/swagger-ui/**")
+                                                                "/api-docs/**", "/swagger-ui/**", "/api/v1/**")
 
                                                                 .permitAll()
                                                                 .requestMatchers("/",
