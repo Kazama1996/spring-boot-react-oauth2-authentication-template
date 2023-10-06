@@ -11,10 +11,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import com.kazama.SpringOAuth2.security.JWTFilter;
 import com.kazama.SpringOAuth2.security.RestAuthenticationEntryPoint;
 import com.kazama.SpringOAuth2.security.oauth2.CustomOAuth2UserService;
@@ -23,8 +19,6 @@ import com.kazama.SpringOAuth2.security.oauth2.OAuthAuthenticationSuccessHandler
 import com.kazama.SpringOAuth2.security.oauth2.OAuthenticationFailureHandler;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-
-import java.util.Arrays;
 
 import lombok.AllArgsConstructor;
 

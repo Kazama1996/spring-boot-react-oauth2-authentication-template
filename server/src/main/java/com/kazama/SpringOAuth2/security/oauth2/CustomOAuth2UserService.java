@@ -1,13 +1,8 @@
 package com.kazama.SpringOAuth2.security.oauth2;
 
-import java.nio.file.attribute.UserPrincipal;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import javax.naming.AuthenticationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -22,8 +17,6 @@ import com.kazama.SpringOAuth2.security.AuthProvider;
 import com.kazama.SpringOAuth2.security.Role;
 import com.kazama.SpringOAuth2.security.oauth2.user.userinfo.OAuth2UserInfo;
 import com.kazama.SpringOAuth2.security.oauth2.user.userinfo.UserInfofactory;
-import com.kazama.SpringOAuth2.util.CookieUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

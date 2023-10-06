@@ -1,20 +1,13 @@
 package com.kazama.SpringOAuth2.security.oauth2;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
-import com.kazama.SpringOAuth2.security.CustomUserDetailsService;
 import com.kazama.SpringOAuth2.util.CookieUtils;
 import com.kazama.SpringOAuth2.util.JWT.JwtService;
 import com.nimbusds.oauth2.sdk.util.StringUtils;

@@ -19,6 +19,6 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
             AuthenticationException authException) throws IOException, ServletException {
         // TODO Auto-generated method stub
         logger.error("Responding with unauthorized error. Message - {}", authException.getMessage());
-        response.sendError(response.SC_UNAUTHORIZED, authException.getLocalizedMessage());
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getLocalizedMessage());
     }
 }

@@ -4,27 +4,17 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Base64;
 import java.util.Optional;
 
-import org.apache.tomcat.util.http.SameSiteCookies;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseCookie.ResponseCookieBuilder;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationResponseType;
-import org.springframework.util.SerializationUtils;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nimbusds.jose.util.StandardCharset;
-
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.util.WebUtils;
 
 public class CookieUtils {
 

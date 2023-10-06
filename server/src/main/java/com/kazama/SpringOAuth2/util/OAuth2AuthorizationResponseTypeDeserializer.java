@@ -2,7 +2,6 @@ package com.kazama.SpringOAuth2.util;
 
 import java.io.IOException;
 
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationResponseType;
 

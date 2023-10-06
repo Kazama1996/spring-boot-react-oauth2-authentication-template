@@ -2,9 +2,6 @@ package com.kazama.SpringOAuth2;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-
 import com.kazama.SpringOAuth2.config.AppProperties;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
