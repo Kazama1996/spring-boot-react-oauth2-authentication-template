@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@RequestMapping("/api/v1/userss")
 public class TestController {
 
-    @GetMapping("/hello")
-    public String ShowHello(Model model) {
-        model.addAttribute("hello", "nmsl");
-        return "hello";
+    @GetMapping("/private/currentuser")
+    public String PrivateTest() {
+        return "private Test";
+    }
+
+    @GetMapping("/currentuser")
+    public String PublicTest() {
+        return "public Test";
     }
 }

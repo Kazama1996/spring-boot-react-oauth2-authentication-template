@@ -27,12 +27,13 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/test")
-    public ResponseEntity<?> NMSL(@CurrentUser UserPrincipal userPrincipal) {
+    @GetMapping("/private/currentuser")
+    public ResponseEntity<?> getCurrentUserName(@CurrentUser UserPrincipal userPrincipal) {
 
         User user = userRepository.findById(UUID.fromString(userPrincipal.getName()))
                 .orElseThrow(() -> new AppException("User is not found"));
 
         return ResponseEntity.ok().body(user.getProfileName());
+
     }
 }
