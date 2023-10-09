@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -26,9 +28,12 @@ import com.kazama.SpringOAuth2.dto.request.UpdatePasswordRequest;
 import com.kazama.SpringOAuth2.dto.response.AuthResponse;
 import com.kazama.SpringOAuth2.exception.AppException;
 import com.kazama.SpringOAuth2.exception.InvalidTokenException;
+import com.kazama.SpringOAuth2.model.MailType;
 import com.kazama.SpringOAuth2.model.PasswordResetToken;
 import com.kazama.SpringOAuth2.model.User;
 import com.kazama.SpringOAuth2.security.AuthProvider;
+import com.kazama.SpringOAuth2.service.MailService.MailService;
+import com.kazama.SpringOAuth2.service.MailService.impl.AccountCenterMailService;
 import com.kazama.SpringOAuth2.util.CookieUtils;
 import com.kazama.SpringOAuth2.util.JWT.JwtService;
 
@@ -38,9 +43,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 
     private final PasswordResetTokenRepository passwordResetTokenRepository;
 
@@ -55,6 +59,17 @@ public class AuthService {
     private final ZoneId userTimeZone = ZoneId.systemDefault();
 
     private PasswordResetToken passwordResetToken;
+
+    public AuthService(UserRepository userRepository, PasswordResetTokenRepository passwordResetTokenRepository,
+            PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService,
+            AccountCenterMailService mailService) {
+        this.userRepository = userRepository;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.mailService = mailService;
+    }
 
     private PasswordResetToken isPasswordResetTokenValid(String token) {
         PasswordResetToken validToken = passwordResetTokenRepository.findByToken(token)
@@ -123,6 +138,7 @@ public class AuthService {
 
     public ResponseEntity<?> sendPasswordResetEmail(ForgotPasswordRequest reqBody)
             throws AppException, MessagingException, IOException {
+        Map<String, String> mailAttributes = new HashMap<>();
         ZonedDateTime now = ZonedDateTime.now(userTimeZone);
         User targetUser = userRepository.findByEmail(reqBody.getEmail())
                 .orElseThrow(() -> new AppException("Could not found this email : " + reqBody.getEmail()));
@@ -132,40 +148,15 @@ public class AuthService {
         passwordResetToken = passwordResetTokenRepository.findByEmail(reqBody.getEmail()).orElse(
                 PasswordResetToken.builder().email(targetUser.getEmail()).iat(now).build());
 
-        // if (passwordResetToken == null) {
-        // passwordResetToken =
-        // PasswordResetToken.builder().email(targetUser.getEmail()).attemptCounter(1)
-        // .isBlackList(false).token(token).build();
-
-        // } else {
-        // ZonedDateTime iat =
-        // passwordResetToken.getIat().withZoneSameInstant(userTimeZone);
-        // if (passwordResetToken.isBlackList()) {
-        // if (iat.plusDays(1)
-        // .compareTo(ZonedDateTime.now(userTimeZone)) > 0) {
-        // throw new AppException("Too many attempt");
-        // } else {
-        // passwordResetToken.setAttemptCounter(1);
-        // passwordResetToken.setBlackList(false);
-        // }
-        // } else {
-        // passwordResetToken.setAttemptCounter(passwordResetToken.getAttemptCounter() +
-        // 1);
-
-        // if (passwordResetToken.getAttemptCounter() == 3) {
-        // passwordResetToken.setBlackList(true);
-
-        // }
-        // }
-
-        // }
         passwordResetToken.setIat(now.plusMinutes(10));
 
         passwordResetToken.setToken(token);
 
         passwordResetTokenRepository.save(passwordResetToken);
 
-        mailService.sendMail(targetUser, passwordResetToken);
+        mailAttributes.put("[Reset_Token]", passwordResetToken.getToken());
+
+        mailService.sendMail(MailType.FORGOT_PASSWORD_MAIL, targetUser, mailAttributes);
 
         return ResponseEntity.ok().body("Send password token to" + targetUser.getEmail());
 
