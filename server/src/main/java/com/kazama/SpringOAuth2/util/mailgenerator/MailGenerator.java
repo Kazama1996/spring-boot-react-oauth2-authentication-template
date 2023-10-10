@@ -35,6 +35,6 @@ public abstract class MailGenerator {
 
     public String getSubject() {
         throw new NotImplementedException(
-                "NotImplementedException: You are not implement this function - MailGenerator.genMail().");
+                "NotImplementedException: You are not implement this function - MailGenerator.getSubject().");
     }
 }

@@ -1,6 +1,8 @@
 package com.kazama.SpringOAuth2.service.MailService.impl;
 
 import com.kazama.SpringOAuth2.service.MailService.MailService;
+import com.kazama.SpringOAuth2.util.mailgenerator.MailGenerator;
+import com.kazama.SpringOAuth2.util.mailgenerator.MailGeneratorFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -11,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.kazama.SpringOAuth2.model.MailType;
 import com.kazama.SpringOAuth2.model.User;
-import com.kazama.SpringOAuth2.util.mailgenerator.MailGenerator;
-import com.kazama.SpringOAuth2.util.mailgenerator.MailGeneratorFactory;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

@@ -17,7 +17,6 @@ public class MailGeneratorFactory {
 
     public void register(MailType mailType, MailGenerator mailGenerator) {
 
-        System.out.println("Register :" + mailType.toString());
         this.mailGeneratorList.put(mailType, mailGenerator);
     }
 
