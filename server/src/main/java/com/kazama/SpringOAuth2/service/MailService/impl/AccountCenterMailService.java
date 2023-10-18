@@ -36,7 +36,6 @@ public class AccountCenterMailService implements MailService {
         MailGenerator mailGenerator = MailGeneratorFactory.getMailGenerator(mailType);
         String content = mailGenerator.genMail(toUser, mailAttribute);
         String subject = mailGenerator.getSubject();
-        System.out.println("Content is :" + content);
         // Send Email
         helper.setFrom(this.from);
         helper.setTo(toUser.getEmail());

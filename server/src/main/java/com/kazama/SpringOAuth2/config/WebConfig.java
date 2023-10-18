@@ -20,8 +20,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(requestLimitInterceptor).addPathPatterns("/api/v1/auth/forgotPassword");
-        registry.addInterceptor(requestLimitInterceptor).addPathPatterns("/api/v1/users/test");
+        System.out.println("Adding requestLimitInterceptor");
+        // registry.addInterceptor(requestLimitInterceptor).addPathPatterns("/api/v1/auth/forgotPassword")
+        // .addPathPatterns("/api/v1/users/private/currentuser");
+        registry.addInterceptor(requestLimitInterceptor);
     }
 
     @Bean

@@ -35,7 +35,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/auth/public")
 @RequiredArgsConstructor
 @Tag(name = "Authentication")
 
@@ -75,18 +75,18 @@ public class AuthController {
         }
 
         @Operation(summary = "Get a password reset link", description = "user input their email then get a password reset link in their inbox.")
-        @PostMapping("/forgotPassowrd")
+        @PostMapping("/forgotPassword")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "send password reset link success", content = {
                                         @Content(mediaType = "text/plain;charset=UTF-8", examples = @ExampleObject(name = "", value = "Send password token to <email which user provided>"))
                         }),
-                        @ApiResponse(responseCode = "400", description = "Invalid email (not present in data base)", content = {
+                        @ApiResponse(responseCode = "404", description = "Invalid email (not present in data base)", content = {
                                         @Content(mediaType = "text/plain:charset=UTF-8", examples = @ExampleObject(name = "", value = "Could not found this email : <email which user provided>"))
                         })
         })
         public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest reqBody)
                         throws AppException, MessagingException, IOException {
-
+                System.out.println("Request in controller is :" + reqBody);
                 return authService.sendPasswordResetEmail(reqBody);
         }
 
