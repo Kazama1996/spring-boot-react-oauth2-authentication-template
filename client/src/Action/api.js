@@ -8,19 +8,27 @@ const customConfig = {
 };
 
 export const SendForgotPasswordRequest = (data) => {
-  return instance.post("/api/v1/auth/forgotPassowrd", data, customConfig);
+  return instance.post(
+    "/api/v1/auth/public/forgotPassword",
+    data,
+    customConfig
+  );
 };
 
 export const SendLoginRequest = (data) => {
-  return instance.post("/api/v1/auth/authentication", data, customConfig);
+  return instance.post(
+    "/api/v1/auth/public/authentication",
+    data,
+    customConfig
+  );
 };
 
 export const SendRegisterRequest = (data) => {
-  return instance.post("/api/v1/auth/register", data, customConfig);
+  return instance.post("/api/v1/auth/public/register", data, customConfig);
 };
 
 export const SendUpdatePasswordRequest = (data) => {
-  return instance.patch("/api/v1/auth/password", data, customConfig);
+  return instance.patch("/api/v1/auth/public/password", data, customConfig);
 };
 
 export const GetUserProfile = () => {

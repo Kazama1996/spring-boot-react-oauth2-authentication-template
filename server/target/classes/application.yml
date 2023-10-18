@@ -22,10 +22,7 @@ spring:
     port: 587
     username: e07ff8ae1ad60b
     password: f11bee4a526156
-  data:
-    redis:
-      host: redis
-      port: 6379
+    
   security:
     oauth2:
       client:
