@@ -30,9 +30,6 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
-        System.out.println("loadAuthorizationRequest");
-        System.out.println(CookieUtils
-                .getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY));
         return CookieUtils
                 .getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY)
                 .map(cookie -> CookieUtils.deserialize(cookie, OAuth2AuthorizationRequest.class)).orElse(null);
@@ -42,10 +39,8 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request,
             HttpServletResponse response) {
-        System.out.println("saveAuthorizationRequest : start");
 
         if (authorizationRequest == null) {
-            System.out.println("saveAuthorizationRequest : authorizationRequest==null");
             CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY);
             CookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_KEY);
             return;
@@ -53,9 +48,6 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
         try {
             CookieUtils.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY,
                     CookieUtils.serialize(authorizationRequest), cookieExpireSeconds);
-            System.out.println("saveAuthorizationRequest: addCookie OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY"
-                    + CookieUtils.serialize(authorizationRequest));
-
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -63,12 +55,10 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
 
         String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_KEY);
 
-        System.out.println("saveAuthorizationRequest  :  redirectUriAfterLogin  " + redirectUriAfterLogin);
         if (StringUtils.isNotBlank(redirectUriAfterLogin)) {
             try {
                 CookieUtils.addCookie(response, REDIRECT_URI_PARAM_COOKIE_KEY, redirectUriAfterLogin,
                         cookieExpireSeconds);
-                System.out.println("saveAuthorizationRequest : addCookie REDIRECT_URI_PARAM_COOKIE_KEY");
 
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
@@ -94,16 +84,8 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
             Authentication authentication) throws UnsupportedEncodingException {
 
         OAuth2AuthenticationToken oauth2Authentication = (OAuth2AuthenticationToken) authentication;
-        // Object principal = oauth2Authentication.getPrincipal();
 
-        // System.out.println("--------------------getPrincipal---------------------------------");
-        // System.out.println(principal);
-        // System.out.println("-----------------------------------------------------");
-        // DefaultOAuth2User oAuth2User = (DefaultOAuth2User) principal;
-
-        // String jwt = jwtService.genJwt(oAuth2User);
         String jwt = jwtService.genJwt(oauth2Authentication.getPrincipal());
-
         Cookie cookie = new Cookie("jwt", jwt);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
@@ -115,6 +97,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
                 "Date, Content-Type, Accept, X-Requested-With, Authorization, From, X-Auth-Token, Request-Id");
         response.setHeader("Access-Control-Expose-Headers", "Set-Cookie");
         response.setHeader("Access-Control-Allow-Credentials", "true");
+
         response.addCookie(cookie);
 
     }

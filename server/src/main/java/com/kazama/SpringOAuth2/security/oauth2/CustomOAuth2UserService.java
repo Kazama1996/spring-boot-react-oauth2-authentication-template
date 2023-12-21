@@ -33,6 +33,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         System.out.println("******************************************************");
         System.out.println("Welcome oauthUser" + oAuth2User);
+        System.out.println("**********************redirect*******************************");
+        System.out.println(userRequest.getClientRegistration().getRedirectUri());
         System.out.println("******************************************************");
         try {
             oAuth2User = processOauth2User(userRequest, oAuth2User);
