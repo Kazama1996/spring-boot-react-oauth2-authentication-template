@@ -15,7 +15,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.kazama.SpringOAuth2.config.AppProperties;
 import com.kazama.SpringOAuth2.exception.AppException;
 import com.kazama.SpringOAuth2.util.CookieUtils;
-import com.kazama.SpringOAuth2.util.JWT.JwtService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -26,8 +25,6 @@ import lombok.AllArgsConstructor;
 @Component
 @AllArgsConstructor
 public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-
-    private JwtService jwtService;
 
     private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
@@ -50,7 +47,8 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
             return;
         }
         String decodedUrl = URLDecoder.decode(targetUrl, "UTF-8");
-        // clearAuthenticationAttributes(request, response);
+        clearAuthenticationAttributes(request, response);
+
         addAccessTokenCookie(request, response, authentication);
         getRedirectStrategy().sendRedirect(request, response, decodedUrl);
     }
