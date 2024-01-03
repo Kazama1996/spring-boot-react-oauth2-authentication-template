@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.kazama.SpringOAuth2.config.AppProperties;
 import com.kazama.SpringOAuth2.exception.AppException;
 import com.kazama.SpringOAuth2.util.CookieUtils;
+import com.kazama.SpringOAuth2.util.JWT.JwtService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -31,25 +32,28 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
     @Autowired
     private AppProperties appProperties;
 
+    @Autowired
+    private JwtService jwtService;
+
     public static final String REDIRECT_URI_PARAM_COOKIE_KEY = "redirect_uri";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
 
-        System.out.println("targetURL---------------------------------------");
         String targetUrl = determineTargetUrl(request, response, authentication);
-        System.out.println(targetUrl);
-        System.out.println("targetURL---------------------------------------");
 
-        if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
-            return;
-        }
         String decodedUrl = URLDecoder.decode(targetUrl, "UTF-8");
-        clearAuthenticationAttributes(request, response);
 
-        addAccessTokenCookie(request, response, authentication);
+        // // @ Test without this:
+        clearAuthenticationAttributes(request, response);
+        // addAccessTokenCookie(request, response, authentication);
+        String jwt = jwtService.genJwt(authentication);
+
+        CookieUtils.addCookie(response, "jwt", jwt, 100);
+
+        System.out.println("This is the new version");
+
         getRedirectStrategy().sendRedirect(request, response, decodedUrl);
     }
 
@@ -58,10 +62,12 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookie(request, response);
     }
 
-    protected void addAccessTokenCookie(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws UnsupportedEncodingException {
-        httpCookieOAuth2AuthorizationRequestRepository.addAccessTokenCookie(request, response, authentication);
-    }
+    // protected void addAccessTokenCookie(HttpServletRequest request,
+    // HttpServletResponse response,
+    // Authentication authentication) throws UnsupportedEncodingException {
+    // httpCookieOAuth2AuthorizationRequestRepository.addAccessTokenCookie(request,
+    // response, authentication);
+    // }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) {
