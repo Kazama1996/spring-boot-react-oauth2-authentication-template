@@ -28,19 +28,36 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public FilterRegistrationBean filterRegistrationBean() {
+        // UrlBasedCorsConfigurationSource source = new
+        // UrlBasedCorsConfigurationSource();
+        // CorsConfiguration config = new CorsConfiguration();
+        // config.addAllowedOrigin("http://localhost:3000");
+        // config.addAllowedOrigin("127.0.0.1:3000");
+        // config.addAllowedHeader("*");
+        // config.addAllowedMethod("*");
+        // config.setAllowCredentials(true);
+        // config.addExposedHeader("Set-Cookie");
+        // source.registerCorsConfiguration("/**", config);
+        // CorsFilter corsFilter = new CorsFilter(source);
+        FilterRegistrationBean<CorsFilter> filterRegistrationBean = new FilterRegistrationBean<>(corsFilter());
+        filterRegistrationBean.setOrder(-101);
+        return filterRegistrationBean;
+
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://127.0.0.1:3000");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
         config.addExposedHeader("Set-Cookie");
         source.registerCorsConfiguration("/**", config);
-        CorsFilter corsFilter = new CorsFilter(source);
-        FilterRegistrationBean<CorsFilter> filterRegistrationBean = new FilterRegistrationBean<>(corsFilter);
-        filterRegistrationBean.setOrder(-101);
-        return filterRegistrationBean;
 
+        return new CorsFilter(source);
     }
 
 }

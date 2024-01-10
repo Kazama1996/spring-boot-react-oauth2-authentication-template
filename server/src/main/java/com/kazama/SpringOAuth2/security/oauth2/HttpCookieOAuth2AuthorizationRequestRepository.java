@@ -22,11 +22,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
 
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY = "oauth2_auth_request";
     public static final String REDIRECT_URI_PARAM_COOKIE_KEY = "redirect_uri";
-    public static final String JWT_KEY = "jwt";
     private static final int cookieExpireSeconds = 180;
-
-    @Autowired
-    private JwtService jwtService;
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
@@ -41,8 +37,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
             HttpServletResponse response) {
 
         if (authorizationRequest == null) {
-            CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY);
-            CookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_KEY);
+            removeAuthorizationRequestCookie(request, response);
             return;
         }
         try {
@@ -79,46 +74,5 @@ public class HttpCookieOAuth2AuthorizationRequestRepository
         CookieUtils.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_KEY);
         CookieUtils.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_KEY);
     }
-
-    // public void addAccessTokenCookie(HttpServletRequest request,
-    // HttpServletResponse response,
-    // Authentication authentication) throws UnsupportedEncodingException {
-
-    // // OAuth2AuthenticationToken oauth2Authentication =
-    // (OAuth2AuthenticationToken)
-    // // authentication;
-
-    // // System.out.println("-----------------------------------OAuth2
-    // // Principal-----------------------------");
-    // // System.out.println(oauth2Authentication.getPrincipal());
-    // // System.out.println("-----------------------------------Normal
-    // // Principal-----------------------------");
-    // // System.out.println(authentication.getPrincipal());
-    // // System.out.println("-----------------------------------Res
-    // // -----------------------------");
-    // // System.out.println(oauth2Authentication == authentication);
-
-    // String jwt = jwtService.genJwt(authentication);
-
-    // // String jwt = jwtService.genJwt(authentication);
-
-    // CookieUtils.addCookie(response, "jwt", jwt, cookieExpireSeconds);
-
-    // // Cookie cookie = new Cookie("jwt", jwt);
-    // // cookie.setPath("/");
-    // // cookie.setHttpOnly(true);
-    // // cookie.setMaxAge(800);
-    // // cookie.setDomain("localhost");
-    // // cookie.setSecure(true);
-    // // cookie.setAttribute("SameSite", "None");
-    // // response.setHeader("Access-Control-Allow-Headers",
-    // // "Date, Content-Type, Accept, X-Requested-With, Authorization,
-    // // From,X-Auth-Token, Request-Id");
-    // // response.setHeader("Access-Control-Expose-Headers", "Set-Cookie");
-    // // response.setHeader("Access-Control-Allow-Credentials", "true");
-
-    // // response.addCookie(cookie);
-
-    // }
 
 }

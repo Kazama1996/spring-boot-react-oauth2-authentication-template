@@ -58,8 +58,6 @@ public class AuthService {
 
     private final ZoneId userTimeZone = ZoneId.systemDefault();
 
-    private PasswordResetToken passwordResetToken;
-
     public AuthService(UserRepository userRepository, PasswordResetTokenRepository passwordResetTokenRepository,
             PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService,
             AccountCenterMailService mailService) {
@@ -145,7 +143,7 @@ public class AuthService {
 
         String token = UUID.randomUUID().toString();
 
-        passwordResetToken = passwordResetTokenRepository.findByEmail(reqBody.getEmail()).orElse(
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByEmail(reqBody.getEmail()).orElse(
                 PasswordResetToken.builder().email(targetUser.getEmail()).iat(now).build());
 
         passwordResetToken.setIat(now.plusMinutes(10));
@@ -165,7 +163,7 @@ public class AuthService {
     public RedirectView redirectUpdatePasswordPage(String token) {
         PasswordResetToken passwordResetToken = isPasswordResetTokenValid(token);
 
-        return new RedirectView("http://127.0.0.1:3000/resetPassword?token=" + passwordResetToken.getToken());
+        return new RedirectView("http://localhost:3000/resetPassword?token=" + passwordResetToken.getToken());
     }
 
     @Transactional
@@ -183,6 +181,6 @@ public class AuthService {
         // delete the passwordReset token in the DB
         passwordResetTokenRepository.deleteByEmail(reqUser.getEmail());
         // redirect to the login page.
-        return ResponseEntity.ok().body("Your password already update");
+        return ResponseEntity.status(200).body("Your password already update");
     }
 }

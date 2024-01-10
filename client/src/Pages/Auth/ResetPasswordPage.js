@@ -25,7 +25,7 @@ const ResetPasswordPage = () => {
           navigate("/login");
         })
         .catch((error) => {
-          navigate("/login?tokenInvalid=true");
+          navigate("/login");
         });
       setErrorMessage("");
     } else {

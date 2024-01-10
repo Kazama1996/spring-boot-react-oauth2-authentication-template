@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -100,7 +101,7 @@ public class SecurityConfig {
                                                 .authorizationEndpoint(endpoint -> endpoint
                                                                 .baseUri("/oauth2/authorize")
                                                                 .authorizationRequestRepository(
-                                                                                cookieAuthorizationRequestRepository()))
+                                                                                this.cookieAuthorizationRequestRepository()))
                                                 /*
                                                  * the default redirectionEndpoint's baseUri is "/login/oauth2/code/*
                                                  * if you want to customize your own baseUri please do as follow:
