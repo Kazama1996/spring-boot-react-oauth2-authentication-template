@@ -1,0 +1,12 @@
+spring:
+    config:
+        activate:
+            on-profile:
+                - dev
+    datasource:
+        url: jdbc:postgresql://localhost:5432/OAuth2
+        username: postgres
+        password: postgres
+        driver-class-name: org.postgresql.Driver
+    redis:
+        address: redis://127.0.0.1:6379

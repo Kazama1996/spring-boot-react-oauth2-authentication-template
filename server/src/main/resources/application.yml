@@ -3,12 +3,8 @@ server:
     include-stacktrace: never
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5435/OAuth2  
-    username: postgres     # fill your username of database       
-    password: postgres     #  fill your password of database
-    driver-class-name: org.postgresql.Driver         # PostgreSQL driver class
-
+  profiles:
+    active: local
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
