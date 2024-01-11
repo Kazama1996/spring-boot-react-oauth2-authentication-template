@@ -1,5 +1,7 @@
 # Spring-React OAuth2 Authentication Template
 
+![image](https://github.com/Kazama1996/spring-boot-react-oauth2-authentication-template/blob/main/main_page.png)
+
 Welcome to my authentication template! This is an authentication system developed using React on the front end and Spring Boot on the back end, designed to simplify the implementation of login and authentication features for developers in their projects.
 
 
