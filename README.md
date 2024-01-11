@@ -17,14 +17,10 @@ Welcome to my authentication template! This is an authentication system develope
    Employs the Spring Boot back-end framework, offering robust support for security, stability, and performance. This ensures the system can handle complex authentication requirements effectively.
 
 3. **Comprehensive Authentication Features:**
-      The template provides a full range of authentication features, including account registration, login, password reset emails, and support for third-party logins.
-    
-     - **Google and Facebook OAuth Support:**
-     Easily integrate Google and Facebook OAuth for seamless third-party login experiences. Users can sign in using their Google or Facebook credentials, enhancing user convenience.
+      The template provides a full range of authentication features, including account registration, login, password reset emails, and support for third-party (Google,Github) logins.
 
-
-4. **JWT Authentication:**
-   The system uses JSON Web Token (JWT) to store authentication information in cookies, ensuring identity security. JWT provides a lightweight, cross-platform authentication solution that effectively manages the user's login status.
+4. **JWT Authorization:**
+   The system uses JSON Web Token (JWT) to store authorization information in cookies, ensuring identity security. JWT provides a lightweight, cross-platform authentication solution that effectively manages the user's login status.
 
 ## How to Use
 
