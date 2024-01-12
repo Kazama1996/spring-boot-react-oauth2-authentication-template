@@ -17,6 +17,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.kazama.SpringOAuth2.dto.request.AuthRequest;
 import com.kazama.SpringOAuth2.dto.request.ForgotPasswordRequest;
 import com.kazama.SpringOAuth2.dto.request.LoginRequest;
+import com.kazama.SpringOAuth2.dto.request.PasswordResetTokenRequest;
 import com.kazama.SpringOAuth2.dto.request.UpdatePasswordRequest;
 import com.kazama.SpringOAuth2.dto.response.AuthResponse;
 import com.kazama.SpringOAuth2.exception.AppException;
@@ -90,11 +91,11 @@ public class AuthController {
                 return authService.sendPasswordResetEmail(reqBody);
         }
 
-        @Operation(summary = "Redirect to a password reset page", description = "Redirect to the password reset page after user click the password reset linke in their inbox")
-        @GetMapping("/passwordReset/{token}")
-        @ApiResponses(value = @ApiResponse(responseCode = "303", description = "Password reset link is valid, Redirect success."))
-        public RedirectView redirectToUpdatePasswordPage(@PathVariable String token) {
-                return authService.redirectUpdatePasswordPage(token);
+        @Operation(summary = "Redirect to a password reset page", description = "Redirect to the password update page after user click the password reset link in their mail inbox")
+        @PostMapping("/passwordResetToken")
+        @ApiResponses(value = @ApiResponse(responseCode = "200", description = "Password reset link is valid, Redirect the update password page."))
+        public ResponseEntity<?> getPasswordResetToken(@RequestBody PasswordResetTokenRequest request) {
+                return authService.getPasswordResetToken(request);
         }
 
         @Operation(summary = "Update password", description = "Update password via password which user provided")

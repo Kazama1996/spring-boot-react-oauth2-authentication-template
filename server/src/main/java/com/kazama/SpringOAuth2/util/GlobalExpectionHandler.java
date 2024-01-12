@@ -34,10 +34,8 @@ public class GlobalExpectionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InvalidTokenException.class)
-    public RedirectView handleInvalidToken(InvalidTokenException ex) {
-        // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
-        return new RedirectView("http://127.0.0.1:3000/login");
-        // return new RedirectView("http://127.0.0.1:3000/login?tokenInvalid=true");
+    public ResponseEntity<?> handleInvalidToken(InvalidTokenException ex) {
+        return ResponseEntity.status(498).body(ex.getMessage());
     }
 
 }

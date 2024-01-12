@@ -34,3 +34,11 @@ export const SendUpdatePasswordRequest = (data) => {
 export const GetUserProfile = () => {
   return instance.get("/api/v1/users/private/currentuser", customConfig);
 };
+
+export const SendPasswordResetToken = (data) => {
+  return instance.post(
+    "/api/v1/auth/public/passwordResetToken",
+    data,
+    customConfig
+  );
+};

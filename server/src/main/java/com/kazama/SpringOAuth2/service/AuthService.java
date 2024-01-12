@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -18,12 +19,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
+import org.yaml.snakeyaml.tokens.ValueToken;
 
 import com.kazama.SpringOAuth2.dao.PasswordResetTokenRepository;
 import com.kazama.SpringOAuth2.dao.UserRepository;
 import com.kazama.SpringOAuth2.dto.request.AuthRequest;
 import com.kazama.SpringOAuth2.dto.request.ForgotPasswordRequest;
 import com.kazama.SpringOAuth2.dto.request.LoginRequest;
+import com.kazama.SpringOAuth2.dto.request.PasswordResetTokenRequest;
 import com.kazama.SpringOAuth2.dto.request.UpdatePasswordRequest;
 import com.kazama.SpringOAuth2.dto.response.AuthResponse;
 import com.kazama.SpringOAuth2.exception.AppException;
@@ -69,19 +72,31 @@ public class AuthService {
         this.mailService = mailService;
     }
 
-    private PasswordResetToken isPasswordResetTokenValid(String token) {
-        PasswordResetToken validToken = passwordResetTokenRepository.findByToken(token)
-                .orElseThrow(() -> new InvalidTokenException("Token is Invalid"));
-        ZonedDateTime iat = validToken.getIat().withZoneSameInstant(userTimeZone);
+    private Boolean isPasswordResetTokenValid(Optional<PasswordResetToken> passwordResetToken) {
+        Boolean isPresent = passwordResetToken.isPresent();
+        ZonedDateTime iat = passwordResetToken.get().getIat().withZoneSameInstant(userTimeZone);
         ZonedDateTime now = ZonedDateTime.now(userTimeZone);
-        if (iat.plusMinutes(10).compareTo(now) < 0) {
-            throw new InvalidTokenException("Token is Expire");
-        }
-        return validToken;
+
+        // Boolean isNotExpired = now.minusMinutes(6).isBefore(iat);
+        Boolean isNotExpired = iat.plusMinutes(6).isAfter(now);
+        return isPresent & isNotExpired;
+
     }
 
-    private User findTokenOwner(String token) {
-        PasswordResetToken passwordResetToken = isPasswordResetTokenValid(token);
+    private PasswordResetToken retrievePasswordResetToken(String token) {
+        Optional<PasswordResetToken> passwordResetToken = passwordResetTokenRepository.findByToken(token);
+
+        if (!isPasswordResetTokenValid(passwordResetToken)) {
+            passwordResetTokenRepository.deleteByToken(token);
+            throw new InvalidTokenException(
+                    "The password reset url is expire, please provide your email to get a new one.");
+        }
+
+        return passwordResetToken.get();
+    }
+
+    private User getPasswordResetTokenOwner(String token) {
+        PasswordResetToken passwordResetToken = retrievePasswordResetToken(token);
 
         User reqUser = userRepository.findByEmail(passwordResetToken.getEmail())
                 .orElseThrow(() -> new InvalidTokenException("Token is invalid"));
@@ -146,7 +161,7 @@ public class AuthService {
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByEmail(reqBody.getEmail()).orElse(
                 PasswordResetToken.builder().email(targetUser.getEmail()).iat(now).build());
 
-        passwordResetToken.setIat(now.plusMinutes(10));
+        passwordResetToken.setIat(now);
 
         passwordResetToken.setToken(token);
 
@@ -160,10 +175,14 @@ public class AuthService {
 
     }
 
-    public RedirectView redirectUpdatePasswordPage(String token) {
-        PasswordResetToken passwordResetToken = isPasswordResetTokenValid(token);
+    @Transactional
+    public ResponseEntity<?> getPasswordResetToken(PasswordResetTokenRequest request) {
 
-        return new RedirectView("http://localhost:3000/resetPassword?token=" + passwordResetToken.getToken());
+        PasswordResetToken token = retrievePasswordResetToken(request.getToken());
+
+        System.out.println("Token Retrive Success");
+
+        return ResponseEntity.ok().body(token);
     }
 
     @Transactional
@@ -172,7 +191,7 @@ public class AuthService {
         ZonedDateTime now = ZonedDateTime.now(userTimeZone);
 
         // verify passwordReset token
-        User reqUser = findTokenOwner(reqBody.getPasswordResetToken());
+        User reqUser = getPasswordResetTokenOwner(reqBody.getPasswordResetToken());
 
         reqUser.setPassword(passwordEncoder.encode(reqBody.getNewPassword()));
         reqUser.setUpdateAt(now);
@@ -181,6 +200,6 @@ public class AuthService {
         // delete the passwordReset token in the DB
         passwordResetTokenRepository.deleteByEmail(reqUser.getEmail());
         // redirect to the login page.
-        return ResponseEntity.status(200).body("Your password already update");
+        return ResponseEntity.status(200).body("Your password update, Login again please ~");
     }
 }
