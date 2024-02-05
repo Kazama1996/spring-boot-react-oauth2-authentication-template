@@ -54,7 +54,7 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
         CookieUtils.addCookie(response, "jwt", jwt, 100);
 
         System.out.println("*************************************");
-        System.out.println("This is the new version");
+        System.out.println("This is the new version " + decodedUrl);
         System.out.println("*************************************");
 
         getRedirectStrategy().sendRedirect(request, response, decodedUrl);
