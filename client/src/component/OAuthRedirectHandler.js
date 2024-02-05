@@ -21,7 +21,7 @@ function OAuth2RedirectHandler() {
 
   useEffect(() => {
     if (isSuccess) {
-      localStorage.setItem(ACCESS_TOKEN, isSuccess);
+      //localStorage.setItem(ACCESS_TOKEN, isSuccess);
       navigate("/profile", { state: { from: location } });
     } else {
       navigate("/login", { state: { from: location, error: error } });

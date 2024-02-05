@@ -18,7 +18,7 @@ public class MyServiceTest {
     @Test
     public void test001() {
         int res = 6 + 6;
-        assertEquals(13, res, "res must be 13 but" + res);
+        assertEquals(12, res, "res must be 13 but" + res);
     }
 
 }

@@ -84,7 +84,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             user = optionalUser.get();
             updateExistingUser(user, oAuth2UserInfo);
-            if (user.getAuthProvider()
+            if (!user.getAuthProvider()
                     .equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
                 throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
                         user.getAuthProvider() + " account. Please use your " + user.getAuthProvider() +

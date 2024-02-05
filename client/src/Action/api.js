@@ -42,3 +42,7 @@ export const SendPasswordResetToken = (data) => {
     customConfig
   );
 };
+
+export const Logout = () => {
+  return instance.post("/api/v1/auth/public/logout", customConfig);
+};

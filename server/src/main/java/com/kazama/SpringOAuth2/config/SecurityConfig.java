@@ -28,6 +28,8 @@ import com.kazama.SpringOAuth2.security.oauth2.HttpCookieOAuth2AuthorizationRequ
 import com.kazama.SpringOAuth2.security.oauth2.OAuthAuthenticationSuccessHandler;
 import com.kazama.SpringOAuth2.security.oauth2.OAuthenticationFailureHandler;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import lombok.AllArgsConstructor;
@@ -83,7 +85,8 @@ public class SecurityConfig {
 
                                                 auth -> auth.requestMatchers(
                                                                 "/oauth2/**",
-                                                                "/api-docs/**", "/swagger-ui/**", "/api/v1/**")
+                                                                "/api-docs/**", "/swagger-ui/**", "/api/v1/**",
+                                                                "/login/**")
 
                                                                 .permitAll()
                                                                 .requestMatchers("/",
@@ -96,6 +99,17 @@ public class SecurityConfig {
                                                 handling -> handling.authenticationEntryPoint(
                                                                 new RestAuthenticationEntryPoint()))
                                 .authenticationProvider(authenticationProvider())
+                                .logout(logout -> logout.logoutUrl("/api/v1/auth/public/logout").permitAll()
+                                                .deleteCookies("jwt")
+                                                .logoutSuccessHandler((request, response, authentication) -> {
+                                                        System.out.println("New version logoutSucceeHandler");
+                                                        response.setContentType("application/json");
+                                                        response.setStatus(HttpServletResponse.SC_OK);
+                                                        System.out.println("Updated version");
+                                                        response.getWriter().write(
+                                                                        "Logout success!! Hope to see you again");
+
+                                                }).clearAuthentication(true))
                                 // oauth2/authorize
                                 .oauth2Login(login -> login
                                                 .authorizationEndpoint(endpoint -> endpoint
@@ -121,6 +135,7 @@ public class SecurityConfig {
                                                 .successHandler(oAuthAuthenticationSuccessHandler)
                                                 .failureHandler(oAuthenticationFailureHandler))
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+
                                 .build();
         }
 

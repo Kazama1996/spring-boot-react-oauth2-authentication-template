@@ -21,6 +21,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jodd.net.HttpStatus;
 import lombok.AllArgsConstructor;
 
 @Component
@@ -52,7 +53,9 @@ public class OAuthAuthenticationSuccessHandler extends SimpleUrlAuthenticationSu
 
         CookieUtils.addCookie(response, "jwt", jwt, 100);
 
+        System.out.println("*************************************");
         System.out.println("This is the new version");
+        System.out.println("*************************************");
 
         getRedirectStrategy().sendRedirect(request, response, decodedUrl);
     }
