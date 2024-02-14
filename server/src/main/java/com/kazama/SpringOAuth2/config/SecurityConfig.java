@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.kazama.SpringOAuth2.security.CustomUserDetailsService;
 import com.kazama.SpringOAuth2.security.JWTFilter;
@@ -107,7 +108,7 @@ public class SecurityConfig {
                                                         response.setStatus(HttpServletResponse.SC_OK);
                                                         System.out.println("Updated version");
                                                         response.getWriter().write(
-                                                                        "Logout success!! Hope to see you again");
+                                                                        "Logout success! Hope to see you again~~");
 
                                                 }).clearAuthentication(true))
                                 // oauth2/authorize
