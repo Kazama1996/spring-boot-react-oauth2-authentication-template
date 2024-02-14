@@ -40,7 +40,7 @@ public class CookieUtils {
         cookie.setHttpOnly(true);
         cookie.setMaxAge(800);
         cookie.setSecure(true); // set false when use in aws ec2
-        cookie.setDomain("3.27.70.254");
+        // cookie.setDomain("3.27.70.254"); //aws ec2 public ip
         // cookie.setPath("http://localhost:8080");
         cookie.setAttribute("SameSite", "None");
 
