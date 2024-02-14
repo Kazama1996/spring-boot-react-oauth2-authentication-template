@@ -30,7 +30,7 @@ function OAuth2RedirectHandler() {
       //navigate("/login", { state: { from: location, error: error } });
       navigate("/login");
     }
-  }, [isSuccess, error, navigate, location]);
+  }, [isSuccess, navigate, location]);
 
   // Return null or any loading indicator if needed
   return null;
